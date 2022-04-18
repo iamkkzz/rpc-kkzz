@@ -1,12 +1,15 @@
 package com.kkzz;
 
 import com.kkzz.proxy.RpcClientProxy;
-import com.kkzz.service.rpcInterface.HelloService;
+import com.kkzz.rpcInterface.HelloService;
 import com.kkzz.to.HelloObject;
+import com.kkzz.transport.RpcClient;
+import com.kkzz.transport.socket.SocketRpcClient;
 
 public class TestClient {
     public static void main(String[] args) {
-        RpcClientProxy proxy = new RpcClientProxy("127.0.0.1", 9090);
+        RpcClient client = new SocketRpcClient();
+        RpcClientProxy proxy = new RpcClientProxy(client);
         HelloService helloService = proxy.getProxy(HelloService.class);
         HelloObject object = new HelloObject(1, "这是消息");
         String res = helloService.hello(object);

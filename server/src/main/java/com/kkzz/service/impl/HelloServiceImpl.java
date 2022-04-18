@@ -1,6 +1,6 @@
 package com.kkzz.service.impl;
 
-import com.kkzz.service.HelloService;
+import com.kkzz.rpcInterface.HelloService;
 import com.kkzz.to.HelloObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

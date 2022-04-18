@@ -1,13 +1,16 @@
 package com.kkzz.dto;
 
-import com.kkzz.RpcResponseCodeEnum;
-import lombok.Builder;
+import com.kkzz.enums.RpcResponseCodeEnum;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
-public class RPCResponse<T> implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RpcResponse<T> implements Serializable {
     /**
      * 响应状态码
      */
@@ -19,16 +22,16 @@ public class RPCResponse<T> implements Serializable {
 
     private T data;
 
-    public static <T> RPCResponse<T> success(T data) {
-        RPCResponse<T> response = new RPCResponse<>();
+    public static <T> RpcResponse<T> success(T data) {
+        RpcResponse<T> response = new RpcResponse<>();
         response.setStatusCode(RpcResponseCodeEnum.SUCCESS.getCode());
         response.setMessage(RpcResponseCodeEnum.SUCCESS.getMessage());
         response.setData(data);
         return response;
     }
 
-    public static <T> RPCResponse<T> fail() {
-        RPCResponse<T> response = new RPCResponse<>();
+    public static <T> RpcResponse<T> fail() {
+        RpcResponse<T> response = new RpcResponse<>();
         response.setStatusCode(RpcResponseCodeEnum.FAIL.getCode());
         response.setMessage(RpcResponseCodeEnum.FAIL.getMessage());
         return response;

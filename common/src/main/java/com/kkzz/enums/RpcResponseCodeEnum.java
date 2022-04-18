@@ -1,4 +1,4 @@
-package com.kkzz;
+package com.kkzz.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

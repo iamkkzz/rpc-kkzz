@@ -1,20 +1,20 @@
 package com.kkzz.proxy;
 
-import com.kkzz.dto.RPCResponse;
+import com.kkzz.dto.RpcResponse;
 import com.kkzz.dto.RpcRequest;
-import com.kkzz.transport.socket.RpcClient;
+import com.kkzz.transport.RpcClient;
+import com.kkzz.transport.netty.NettyRpcClient;
+import com.kkzz.transport.socket.SocketRpcClient;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public class RpcClientProxy implements InvocationHandler {
-    private String host;
-    private int port;
+    private RpcClient client;
 
-    public RpcClientProxy(String host, int port) {
-        this.host = host;
-        this.port = port;
+    public RpcClientProxy(RpcClient client) {
+        this.client = client;
     }
 
     public <T> T getProxy(Class<T> clazz) {
@@ -29,7 +29,9 @@ public class RpcClientProxy implements InvocationHandler {
                 .parameters(args)
                 .paramTypes(method.getParameterTypes())
                 .build();
-        RpcClient rpcClient = new RpcClient();
-        return ((RPCResponse) rpcClient.sendRequest(rpcRequest, host, port)).getData();
+        RpcResponse<Object> response = null;
+        SocketRpcClient socketRpcClient = new SocketRpcClient();
+        response = (RpcResponse<Object>) client.sendRequest(rpcRequest);
+        return response.getData();
     }
 }

@@ -1,4 +1,4 @@
-package com.kkzz.service;
+package com.kkzz.rpcInterface;
 
 import com.kkzz.to.HelloObject;
 
