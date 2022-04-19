@@ -1,6 +1,5 @@
 package com.kkzz.serializer;
 
-import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kkzz.dto.RpcRequest;
@@ -10,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class JsonSerializer implements CommonSerializer{
-    private static final Logger logger = LoggerFactory.getLogger(JsonSerializer.class);
+public class JacksonSerializer implements CommonSerializer{
+    private static final Logger logger = LoggerFactory.getLogger(JacksonSerializer.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -54,6 +53,6 @@ public class JsonSerializer implements CommonSerializer{
 
     @Override
     public int getCode() {
-        return SerializerCode.valueOf("JSON").getCode();
+        return SerializerCode.valueOf("JACKSON").getCode();
     }
 }

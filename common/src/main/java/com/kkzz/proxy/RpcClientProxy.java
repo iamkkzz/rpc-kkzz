@@ -3,8 +3,6 @@ package com.kkzz.proxy;
 import com.kkzz.dto.RpcResponse;
 import com.kkzz.dto.RpcRequest;
 import com.kkzz.transport.RpcClient;
-import com.kkzz.transport.netty.NettyRpcClient;
-import com.kkzz.transport.socket.SocketRpcClient;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -30,7 +28,6 @@ public class RpcClientProxy implements InvocationHandler {
                 .paramTypes(method.getParameterTypes())
                 .build();
         RpcResponse<Object> response = null;
-        SocketRpcClient socketRpcClient = new SocketRpcClient();
         response = (RpcResponse<Object>) client.sendRequest(rpcRequest);
         return response.getData();
     }

@@ -3,9 +3,7 @@ package com.kkzz.transport.netty.handler;
 import com.kkzz.dto.RpcRequest;
 import com.kkzz.dto.RpcResponse;
 import com.kkzz.handler.RequestHandler;
-import com.kkzz.registry.DefaultServiceRegistry;
-import com.kkzz.registry.ServiceRegistry;
-import com.kkzz.transport.netty.NettyRpcClient;
+import com.kkzz.provider.ServiceProvider;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,14 +15,14 @@ import org.slf4j.LoggerFactory;
 public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     private static final Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
     private static RequestHandler requestHandler;
-    private static ServiceRegistry serviceRegistry;
+    private static ServiceProvider serviceProvider;
 
     static {
         requestHandler = new RequestHandler();
     }
 
-    public NettyServerHandler(ServiceRegistry registry) {
-        this.serviceRegistry=registry;
+    public NettyServerHandler(ServiceProvider serviceProvider) {
+        this.serviceProvider =serviceProvider;
     }
 
     @Override
@@ -32,9 +30,10 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         try {
             logger.info("服务器接收到请求:{}",msg);
             String interfaceName = msg.getInterfaceName();
-            Object service = serviceRegistry.getService(interfaceName);
+            Object service = serviceProvider.getServiceProvider(interfaceName);
             Object result = requestHandler.handle(msg, service);
-            ChannelFuture future = ctx.writeAndFlush(RpcResponse.success(result));
+            RpcResponse<Object> response = RpcResponse.success(result);
+            ChannelFuture future = ctx.writeAndFlush(response);
             future.addListener(ChannelFutureListener.CLOSE);
         }finally {
             ReferenceCountUtil.release(msg);

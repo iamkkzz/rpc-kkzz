@@ -1,8 +1,10 @@
 package com.kkzz.transport.netty;
 
-import com.kkzz.registry.DefaultServiceRegistry;
+import com.kkzz.provider.DefaultServiceProvider;
+import com.kkzz.provider.ServiceProvider;
+import com.kkzz.registry.NacosServiceRegistry;
 import com.kkzz.registry.ServiceRegistry;
-import com.kkzz.serializer.JsonSerializer;
+import com.kkzz.serializer.FastJsonSerializer;
 import com.kkzz.transport.RpcServer;
 import com.kkzz.transport.netty.codec.CommonDecoder;
 import com.kkzz.transport.netty.codec.CommonEncoder;
@@ -20,43 +22,56 @@ import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutionException;
 
 public class NettyRpcServer implements RpcServer {
-    private static final Logger logger= LoggerFactory.getLogger(NettyRpcServer.class);
-    private ServiceRegistry registry;
-    public NettyRpcServer(DefaultServiceRegistry registry) {
-        this.registry=registry;
+    private static final Logger logger = LoggerFactory.getLogger(NettyRpcServer.class);
+    private String host;
+    private Integer port;
+    private ServiceProvider serviceProvider;
+    private ServiceRegistry serviceRegistry;
+
+    public NettyRpcServer(String host, Integer port) {
+        this.host = host;
+        this.port = port;
+        this.serviceProvider = new DefaultServiceProvider();
+        this.serviceRegistry = new NacosServiceRegistry();
     }
 
-
     @Override
-    public void start(int port) {
+    public void start() {
         EventLoopGroup boss = new NioEventLoopGroup();
         EventLoopGroup worker = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
-            b.group(boss,worker)
+            b.group(boss, worker)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .option(ChannelOption.SO_BACKLOG,256)
-                    .option(ChannelOption.SO_KEEPALIVE,true)
-                    .childOption(ChannelOption.TCP_NODELAY,true)
+                    .option(ChannelOption.SO_BACKLOG, 256)
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    .childOption(ChannelOption.TCP_NODELAY, true)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new CommonDecoder());
-                            ch.pipeline().addLast(new CommonEncoder(new JsonSerializer()));
-                            ch.pipeline().addLast(new NettyServerHandler(registry));
+                            ch.pipeline().addLast(new CommonEncoder(new FastJsonSerializer()));
+                            ch.pipeline().addLast(new NettyServerHandler(serviceProvider));
                         }
                     });
             ChannelFuture future = b.bind(port).sync();
             future.channel().closeFuture().get();
-        } catch (ExecutionException|InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             boss.shutdownGracefully();
             worker.shutdownGracefully();
         }
+    }
+
+    @Override
+    public <T> void publishService(Object service, Class<T> serviceClass) {
+        serviceProvider.addServiceProvider(service);
+        serviceRegistry.register(serviceClass.getCanonicalName(), new InetSocketAddress(host, port));
     }
 }

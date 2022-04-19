@@ -1,6 +1,5 @@
 package com.kkzz;
 
-import com.kkzz.registry.DefaultServiceRegistry;
 import com.kkzz.rpcInterface.HelloService;
 import com.kkzz.service.impl.HelloServiceImpl;
 import com.kkzz.transport.netty.NettyRpcServer;
@@ -8,9 +7,8 @@ import com.kkzz.transport.netty.NettyRpcServer;
 public class NettyTestServer {
     public static void main(String[] args) {
         HelloService helloService = new HelloServiceImpl();
-        DefaultServiceRegistry registry = new DefaultServiceRegistry();
-        registry.register(helloService);
-        NettyRpcServer server = new NettyRpcServer(registry);
-        server.start(9090);
+        NettyRpcServer server = new NettyRpcServer("127.0.0.1", 9090);
+        server.publishService(helloService,HelloService.class);
+        server.start();
     }
 }

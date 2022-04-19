@@ -2,7 +2,8 @@ package com.kkzz.transport.netty;
 
 import com.kkzz.dto.RpcRequest;
 import com.kkzz.dto.RpcResponse;
-import com.kkzz.serializer.JsonSerializer;
+import com.kkzz.serializer.FastJsonSerializer;
+import com.kkzz.serializer.JacksonSerializer;
 import com.kkzz.transport.RpcClient;
 import com.kkzz.transport.netty.codec.CommonDecoder;
 import com.kkzz.transport.netty.codec.CommonEncoder;
@@ -43,7 +44,7 @@ public class NettyRpcClient implements RpcClient {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new CommonDecoder());
-                        ch.pipeline().addLast(new CommonEncoder(new JsonSerializer()));
+                        ch.pipeline().addLast(new CommonEncoder(new FastJsonSerializer()));
                         ch.pipeline().addLast(new NettyClientHandler());
                     }
                 });
@@ -66,7 +67,7 @@ public class NettyRpcClient implements RpcClient {
                 channel.closeFuture().sync();
                 AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
                 RpcResponse rpcResponse = channel.attr(key).get();
-                return rpcResponse.getData();
+                return rpcResponse;
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

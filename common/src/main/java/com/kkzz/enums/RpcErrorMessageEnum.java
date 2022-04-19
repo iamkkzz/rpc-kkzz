@@ -13,6 +13,8 @@ public enum RpcErrorMessageEnum {
     REQUEST_NOT_MATCH_RESPONSE("返回结果错误！请求和返回的相应不匹配"),
     UNKNOWN_PACKAGE_TYPE("无法识别该数据包"),
     UNKNOWN_SERIALIZER("无法识别该序列化器"),
+    FAILED_TO_CONNECT_TO_SERVICE_REGISTRY("无法连接至注册中心"),
+    REGISTER_SERVICE_FAILED("服务注册失败"),
     UNKNOWN_PROTOCOL("不支持该协议包");
     private final String message;
 }
