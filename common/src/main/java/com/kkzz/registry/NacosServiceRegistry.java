@@ -33,16 +33,4 @@ public class NacosServiceRegistry implements ServiceRegistry{
             throw new RpcException(RpcErrorMessageEnum.REGISTER_SERVICE_FAILED);
         }
     }
-
-    @Override
-    public InetSocketAddress lookupService(String serviceName) {
-        try {
-            List<Instance> instances = namingService.getAllInstances(serviceName);
-            Instance instance = instances.get(0);
-            return new InetSocketAddress(instance.getIp(),instance.getPort());
-        } catch (NacosException e) {
-            logger.error("获取服务时发生异常:",e);
-        }
-        return null;
-    }
 }

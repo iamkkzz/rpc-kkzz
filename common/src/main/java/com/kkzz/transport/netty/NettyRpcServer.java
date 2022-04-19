@@ -1,5 +1,6 @@
 package com.kkzz.transport.netty;
 
+import com.kkzz.hook.ShutDownHook;
 import com.kkzz.provider.DefaultServiceProvider;
 import com.kkzz.provider.ServiceProvider;
 import com.kkzz.registry.NacosServiceRegistry;
@@ -60,6 +61,7 @@ public class NettyRpcServer implements RpcServer {
                         }
                     });
             ChannelFuture future = b.bind(port).sync();
+            ShutDownHook.getShutDownHook().addClearAllHook();
             future.channel().closeFuture().get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
