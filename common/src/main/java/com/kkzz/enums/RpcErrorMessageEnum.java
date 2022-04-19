@@ -15,6 +15,8 @@ public enum RpcErrorMessageEnum {
     UNKNOWN_SERIALIZER("无法识别该序列化器"),
     FAILED_TO_CONNECT_TO_SERVICE_REGISTRY("无法连接至注册中心"),
     REGISTER_SERVICE_FAILED("服务注册失败"),
+    SERVICE_SCAN_PACKAGE_NOT_FOUND("找不到启动扫描包"),
+    UNKNOWN_ERROR("未知错误"),
     UNKNOWN_PROTOCOL("不支持该协议包");
     private final String message;
 }

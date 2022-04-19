@@ -1,11 +1,14 @@
 package com.kkzz.transport.netty;
 
+import com.alibaba.fastjson.JSON;
 import com.kkzz.hook.ShutDownHook;
 import com.kkzz.provider.DefaultServiceProvider;
 import com.kkzz.provider.ServiceProvider;
 import com.kkzz.registry.NacosServiceRegistry;
 import com.kkzz.registry.ServiceRegistry;
+import com.kkzz.serializer.CommonSerializer;
 import com.kkzz.serializer.FastJsonSerializer;
+import com.kkzz.transport.AbstractRpcServer;
 import com.kkzz.transport.RpcServer;
 import com.kkzz.transport.netty.codec.CommonDecoder;
 import com.kkzz.transport.netty.codec.CommonEncoder;
@@ -26,22 +29,26 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutionException;
 
-public class NettyRpcServer implements RpcServer {
-    private static final Logger logger = LoggerFactory.getLogger(NettyRpcServer.class);
-    private String host;
-    private Integer port;
-    private ServiceProvider serviceProvider;
-    private ServiceRegistry serviceRegistry;
+public class NettyRpcServer extends AbstractRpcServer {
+
+    private final CommonSerializer serializer;
 
     public NettyRpcServer(String host, Integer port) {
-        this.host = host;
+        this(host, port, 0);
+    }
+
+    public NettyRpcServer(String host, Integer port, Integer serializer) {
         this.port = port;
-        this.serviceProvider = new DefaultServiceProvider();
-        this.serviceRegistry = new NacosServiceRegistry();
+        this.host = host;
+        serviceRegistry = new NacosServiceRegistry();
+        serviceProvider = new DefaultServiceProvider();
+        this.serializer = CommonSerializer.getByCode(serializer);
+        scanServices();
     }
 
     @Override
     public void start() {
+        ShutDownHook.getShutDownHook().addClearAllHook();
         EventLoopGroup boss = new NioEventLoopGroup();
         EventLoopGroup worker = new NioEventLoopGroup();
         try {
@@ -56,12 +63,11 @@ public class NettyRpcServer implements RpcServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new CommonDecoder());
-                            ch.pipeline().addLast(new CommonEncoder(new FastJsonSerializer()));
+                            ch.pipeline().addLast(new CommonEncoder(serializer));
                             ch.pipeline().addLast(new NettyServerHandler(serviceProvider));
                         }
                     });
             ChannelFuture future = b.bind(port).sync();
-            ShutDownHook.getShutDownHook().addClearAllHook();
             future.channel().closeFuture().get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -71,9 +77,4 @@ public class NettyRpcServer implements RpcServer {
         }
     }
 
-    @Override
-    public <T> void publishService(Object service, Class<T> serviceClass) {
-        serviceProvider.addServiceProvider(service);
-        serviceRegistry.register(serviceClass.getCanonicalName(), new InetSocketAddress(host, port));
-    }
 }

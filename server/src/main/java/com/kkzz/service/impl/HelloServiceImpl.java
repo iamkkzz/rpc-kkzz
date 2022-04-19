@@ -1,10 +1,12 @@
 package com.kkzz.service.impl;
 
+import com.kkzz.annotation.Service;
 import com.kkzz.rpcInterface.HelloService;
 import com.kkzz.to.HelloObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Service
 public class HelloServiceImpl implements HelloService {
     private static final Logger logger = LoggerFactory.getLogger(HelloServiceImpl.class);
 
