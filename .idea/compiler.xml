@@ -6,7 +6,6 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="serialization" />
         <module name="registry" />
         <module name="server" />
         <module name="common" />
@@ -16,8 +15,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="client" target="11" />
-      <module name="server" target="11" />
+      <module name="serialization" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

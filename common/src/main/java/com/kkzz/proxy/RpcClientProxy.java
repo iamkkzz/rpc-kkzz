@@ -8,21 +8,21 @@ import java.lang.reflect.Proxy;
 
 @Slf4j
 public class RpcClientProxy implements InvocationHandler {
-    Object obj;
 
     public RpcClientProxy() {
 
     }
 
     public <T> T getProxy(Class<T> clazz) {
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), clazz.getInterfaces(), this);
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, this);
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         log.info("执行方法:{}", method.getName());
-        //先构造请求
+        //todo 判断是哪种请求,判断使用哪种nettyClient发送消息
 
+        //返回结果
         return null;
     }
 }
