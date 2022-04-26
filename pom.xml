@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>common</module>
-        <module>remoting</module>
+        <module>minidubbo</module>
         <module>registry</module>
         <module>example</module>
     </modules>

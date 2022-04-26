@@ -8,10 +8,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="registry" />
         <module name="server" />
-        <module name="common" />
         <module name="client" />
         <module name="api" />
-        <module name="remoting" />
+        <module name="common" />
+        <module name="minidubbo" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
