@@ -18,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 public class RpcClientProxy implements InvocationHandler {
+    private static final String INTERFACE_NAME = "interfaceName";
     private final RpcRequestTransport rpcRequestTransport;
     private final RpcServiceConfig rpcServiceConfig;
 
@@ -39,8 +40,8 @@ public class RpcClientProxy implements InvocationHandler {
     @SneakyThrows
     @SuppressWarnings("unchecked")
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args){
-        log.info("代理对象调用方法:[{}]",method.getName());
+    public Object invoke(Object proxy, Method method, Object[] args) {
+        log.info("代理对象调用方法:[{}]", method.getName());
         RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
                 .parameters(args)
                 .interfaceName(method.getDeclaringClass().getName())
@@ -49,23 +50,23 @@ public class RpcClientProxy implements InvocationHandler {
                 .group(rpcServiceConfig.getGroup())
                 .version(rpcServiceConfig.getVersion())
                 .build();
-        RpcResponse<Object> rpcResponse=null;
+        RpcResponse<Object> rpcResponse = null;
         //todo 这里可以进行优化
-        CompletableFuture<RpcResponse<Object>> future= (CompletableFuture<RpcResponse<Object>>) rpcRequestTransport.sendRequest(rpcRequest);
-        rpcResponse=future.get();
-        check(rpcRequest,rpcResponse);
+        CompletableFuture<RpcResponse<Object>> future = (CompletableFuture<RpcResponse<Object>>) rpcRequestTransport.sendRequest(rpcRequest);
+        rpcResponse = future.get();
+        check(rpcRequest, rpcResponse);
         return rpcResponse.getData();
     }
 
     private void check(RpcRequest rpcRequest, RpcResponse<Object> rpcResponse) {
-        if (rpcResponse==null){
-
+        if (rpcResponse == null) {
+            throw new RpcException(RpcErrorMessageEnum.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
         }
-        if (!rpcRequest.getRequestId().equals(rpcResponse.getRequestId())){
-
+        if (!rpcRequest.getRequestId().equals(rpcResponse.getRequestId())) {
+            throw new RpcException(RpcErrorMessageEnum.CLIENT_CONNECT_SERVER_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
         }
-        if (rpcResponse.getCode()==null||!rpcResponse.getCode().equals(RpcResponseCodeEnum.SUCCESS.getCode())){
-
+        if (rpcResponse.getCode() == null || !rpcResponse.getCode().equals(RpcResponseCodeEnum.SUCCESS.getCode())) {
+            throw new RpcException(RpcErrorMessageEnum.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
         }
     }
 }
