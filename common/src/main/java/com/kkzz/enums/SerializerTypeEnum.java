@@ -11,4 +11,13 @@ public enum SerializerTypeEnum {
     HESSIAN((byte) 0x03, "hessian");
     private final byte code;
     private final String name;
+
+    public static String getName(byte code){
+        for (SerializerTypeEnum value : SerializerTypeEnum.values()) {
+            if (value.getCode()==code){
+                return value.getName();
+            }
+        }
+        return null;
+    }
 }

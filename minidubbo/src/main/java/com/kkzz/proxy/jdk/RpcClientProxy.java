@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 public class RpcClientProxy implements InvocationHandler {
@@ -37,10 +38,10 @@ public class RpcClientProxy implements InvocationHandler {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, this);
     }
 
-    @SneakyThrows
+
     @SuppressWarnings("unchecked")
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) {
+    public Object invoke(Object proxy, Method method, Object[] args) throws ExecutionException, InterruptedException {
         log.info("代理对象调用方法:[{}]", method.getName());
         RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
                 .parameters(args)
