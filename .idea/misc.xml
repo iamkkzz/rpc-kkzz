@@ -12,6 +12,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/client/pom.xml" />
+        <option value="$PROJECT_DIR$/example/pom.xml" />
         <option value="$PROJECT_DIR$/serialization/pom.xml" />
       </set>
     </option>

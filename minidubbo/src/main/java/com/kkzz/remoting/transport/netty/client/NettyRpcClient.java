@@ -3,6 +3,9 @@ package com.kkzz.remoting.transport.netty.client;
 import com.kkzz.ServiceDiscovery;
 import com.kkzz.enums.CompressTypeEnum;
 import com.kkzz.enums.SerializerTypeEnum;
+import com.kkzz.factory.SingletonFactory;
+import com.kkzz.loadbalancer.RandomLoadBalance;
+import com.kkzz.nacos.NacosServiceDiscoveryImpl;
 import com.kkzz.remoting.constants.RpcConstants;
 import com.kkzz.remoting.dto.RpcMessage;
 import com.kkzz.remoting.dto.RpcRequest;
@@ -48,14 +51,14 @@ public class NettyRpcClient implements RpcRequestTransport {
                         pipeline.addLast(new IdleStateHandler(0, 5, 0, TimeUnit.SECONDS));
                         pipeline.addLast(new RpcMessageEncoder());
                         pipeline.addLast(new RpcMessageDecoder());
-                        pipeline.addLast();
+                        pipeline.addLast(new NettyClientHandler());
                     }
                 });
 
         //todo 使用ExtensionLoader
-        this.serviceDiscovery = null;
-        this.unprocessedRequests = null;
-        this.channelProvider = null;
+        this.serviceDiscovery = new NacosServiceDiscoveryImpl(new RandomLoadBalance());
+        this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
+        this.channelProvider = SingletonFactory.getInstance(ChannelProvider.class);
     }
 
     /**
@@ -73,9 +76,9 @@ public class NettyRpcClient implements RpcRequestTransport {
         if (channel.isActive()) {
             unprocessedRequests.put(request.getRequestId(), resFuture);
             RpcMessage rpcMessage = RpcMessage.builder().data(request)
-                    .codec(SerializerTypeEnum.FASTJSON.getCode())
+                    .codec(SerializerTypeEnum.HESSIAN.getCode())
                     .compress(CompressTypeEnum.GZIP.getCode())
-                    .messageType(RpcConstants.RESPONSE_TYPE).build();
+                    .messageType(RpcConstants.REQUEST_TYPE).build();
             channel.writeAndFlush(rpcMessage).addListener((ChannelFutureListener) future -> {
                 if (future.isSuccess()) {
                     log.info("客户端发现消息成功:[{}]", rpcMessage);

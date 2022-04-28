@@ -25,6 +25,7 @@ public class CustomShutdownHook {
             } catch (Exception e) {
                 log.error("注销全部服务失败");
             }
+
         }));
     }
 }

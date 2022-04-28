@@ -8,6 +8,7 @@ import com.kkzz.remoting.constants.RpcConstants;
 import com.kkzz.remoting.dto.RpcMessage;
 import com.kkzz.serialize.Serializer;
 import com.kkzz.serialize.fastjson.FastJsonSerializer;
+import com.kkzz.serialize.hessian.HessianSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
@@ -38,7 +39,7 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
             if (messageType != RpcConstants.HEARTBEAT_REQUEST_TYPE && messageType != RpcConstants.HEARTBEAT_RESPONSE_TYPE) {
                 //todo 使用ExtensionLoader
                 String codecName = SerializerTypeEnum.getName(rpcMessage.getCodec());
-                Serializer serializer = new FastJsonSerializer();
+                Serializer serializer = new HessianSerializer();
                 bodyBuf = serializer.serialize(rpcMessage.getData());
                 //todo 使用ExtensionLoader
                 String compressName = CompressTypeEnum.getName(rpcMessage.getCompress());

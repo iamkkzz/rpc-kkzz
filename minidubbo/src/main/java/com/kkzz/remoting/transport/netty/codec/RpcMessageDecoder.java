@@ -10,6 +10,7 @@ import com.kkzz.remoting.dto.RpcRequest;
 import com.kkzz.remoting.dto.RpcResponse;
 import com.kkzz.serialize.Serializer;
 import com.kkzz.serialize.fastjson.FastJsonSerializer;
+import com.kkzz.serialize.hessian.HessianSerializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -83,7 +84,7 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
             buf=compress.decompress(buf);
             String codecName = SerializerTypeEnum.getName(codecType);
             //todo 利用ExtensionLoader获取序列化器
-            Serializer serializer = new FastJsonSerializer();
+            Serializer serializer = new HessianSerializer();
             if (messageType==RpcConstants.REQUEST_TYPE){
                 RpcRequest rpcRequest = serializer.deserialize(buf, RpcRequest.class);
                 rpcMessage.setData(rpcRequest);

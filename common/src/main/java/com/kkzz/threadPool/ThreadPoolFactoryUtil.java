@@ -34,7 +34,7 @@ public class ThreadPoolFactoryUtil {
                 config.getUnit(), config.getWorkQueue(), threadFactory);
     }
 
-    private static ThreadFactory createThreadFactory(String threadPoolName, Boolean daemon) {
+    public static ThreadFactory createThreadFactory(String threadPoolName, Boolean daemon) {
         if (threadPoolName != null) {
             if (daemon != null) {
                 return new ThreadFactoryBuilder().setNamePrefix(threadPoolName + "-%d").setDaemon(daemon).build();
