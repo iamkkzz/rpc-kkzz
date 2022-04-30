@@ -4,6 +4,7 @@ import com.kkzz.compress.Compress;
 import com.kkzz.compress.gzip.GzipCompress;
 import com.kkzz.enums.CompressTypeEnum;
 import com.kkzz.enums.SerializerTypeEnum;
+import com.kkzz.extension.ExtensionLoader;
 import com.kkzz.remoting.constants.RpcConstants;
 import com.kkzz.remoting.dto.RpcMessage;
 import com.kkzz.remoting.dto.RpcRequest;
@@ -73,22 +74,22 @@ public class RpcMessageDecoder extends LengthFieldBasedFrameDecoder {
             rpcMessage.setData(RpcConstants.PONG);
             return rpcMessage;
         }
-        int bodyLength=fullLength-RpcConstants.HEAD_LENGTH;
-        if (bodyLength>0){
+        int bodyLength = fullLength - RpcConstants.HEAD_LENGTH;
+        if (bodyLength > 0) {
             byte[] buf = new byte[bodyLength];
             in.readBytes(buf);
             //进行解码
             String compressName = CompressTypeEnum.getName(compressType);
-            //todo 利用ExtensionLoader获取Compress
-            Compress compress = new GzipCompress();
-            buf=compress.decompress(buf);
+            //todo
+            Compress compress = ExtensionLoader.getExtensionLoader(Compress.class).getExtension(compressName);
+            buf = compress.decompress(buf);
             String codecName = SerializerTypeEnum.getName(codecType);
-            //todo 利用ExtensionLoader获取序列化器
-            Serializer serializer = new HessianSerializer();
-            if (messageType==RpcConstants.REQUEST_TYPE){
+            //todo
+            Serializer serializer = ExtensionLoader.getExtensionLoader(Serializer.class).getExtension(codecName);
+            if (messageType == RpcConstants.REQUEST_TYPE) {
                 RpcRequest rpcRequest = serializer.deserialize(buf, RpcRequest.class);
                 rpcMessage.setData(rpcRequest);
-            }else {
+            } else {
                 RpcResponse rpcResponse = serializer.deserialize(buf, RpcResponse.class);
                 rpcMessage.setData(rpcResponse);
             }

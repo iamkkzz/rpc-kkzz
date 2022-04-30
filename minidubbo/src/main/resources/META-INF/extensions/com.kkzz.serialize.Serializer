@@ -1,0 +1,2 @@
+fastjson=com.kkzz.serialize.fastjson.FastJsonSerializer
+hessian=com.kkzz.serialize.hessian.HessianSerializer

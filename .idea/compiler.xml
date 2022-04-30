@@ -7,11 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="registry" />
+        <module name="test-client" />
         <module name="common" />
+        <module name="test-api" />
         <module name="test-server" />
         <module name="minidubbo" />
-        <module name="test-client" />
-        <module name="test-api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

@@ -32,6 +32,7 @@ public class NettyRpcServiceHandler extends SimpleChannelInboundHandler<RpcMessa
         rpcMessage.setCodec(SerializerTypeEnum.HESSIAN.getCode());
         rpcMessage.setCompress(CompressTypeEnum.GZIP.getCode());
         if (messageType == RpcConstants.HEARTBEAT_REQUEST_TYPE) {
+            //收到心跳包,返回响应包
             rpcMessage.setMessageType(RpcConstants.HEARTBEAT_RESPONSE_TYPE);
             rpcMessage.setData(RpcConstants.PONG);
         } else {

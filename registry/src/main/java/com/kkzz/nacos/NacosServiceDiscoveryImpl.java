@@ -5,6 +5,7 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.kkzz.ServiceDiscovery;
 import com.kkzz.enums.RpcErrorMessageEnum;
 import com.kkzz.exception.RpcException;
+import com.kkzz.extension.ExtensionLoader;
 import com.kkzz.loadbalancer.LoadBalancer;
 import com.kkzz.loadbalancer.RandomLoadBalance;
 import com.kkzz.nacos.utils.NacosUtils;
@@ -16,11 +17,10 @@ import java.util.List;
 @Slf4j
 public class NacosServiceDiscoveryImpl implements ServiceDiscovery {
 
-    private final LoadBalancer loadBalancer;
+    private final LoadBalancer loadBalancer=ExtensionLoader.getExtensionLoader(LoadBalancer.class).getExtension("loadBalance");
 
-    public NacosServiceDiscoveryImpl(LoadBalancer loadBalancer) {
-        if (loadBalancer == null) this.loadBalancer = new RandomLoadBalance();
-        else this.loadBalancer = loadBalancer;
+    public NacosServiceDiscoveryImpl() {
+
     }
 
     @Override

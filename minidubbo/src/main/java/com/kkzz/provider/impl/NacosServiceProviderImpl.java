@@ -4,13 +4,11 @@ import com.kkzz.ServiceRegistry;
 import com.kkzz.config.RpcServiceConfig;
 import com.kkzz.enums.RpcErrorMessageEnum;
 import com.kkzz.exception.RpcException;
-import com.kkzz.factory.SingletonFactory;
-import com.kkzz.nacos.NacosServiceRegistryImpl;
+import com.kkzz.extension.ExtensionLoader;
 import com.kkzz.provider.ServiceProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,8 +22,8 @@ public class NacosServiceProviderImpl implements ServiceProvider {
     public NacosServiceProviderImpl() {
         serviceMap = new ConcurrentHashMap<>();
         registeredService = ConcurrentHashMap.newKeySet();
-        //todo 使用ExtensionLoader
-        serviceRegistry = SingletonFactory.getInstance(NacosServiceRegistryImpl.class);
+        //todo
+        serviceRegistry = ExtensionLoader.getExtensionLoader(ServiceRegistry.class).getExtension("nacos");
     }
 
     @Override

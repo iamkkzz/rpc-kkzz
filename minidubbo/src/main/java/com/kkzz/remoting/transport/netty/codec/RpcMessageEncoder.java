@@ -4,6 +4,7 @@ import com.kkzz.compress.Compress;
 import com.kkzz.compress.gzip.GzipCompress;
 import com.kkzz.enums.CompressTypeEnum;
 import com.kkzz.enums.SerializerTypeEnum;
+import com.kkzz.extension.ExtensionLoader;
 import com.kkzz.remoting.constants.RpcConstants;
 import com.kkzz.remoting.dto.RpcMessage;
 import com.kkzz.serialize.Serializer;
@@ -37,13 +38,13 @@ public class RpcMessageEncoder extends MessageToByteEncoder<RpcMessage> {
             byte[] bodyBuf = null;
             int fullLength = RpcConstants.HEAD_LENGTH;
             if (messageType != RpcConstants.HEARTBEAT_REQUEST_TYPE && messageType != RpcConstants.HEARTBEAT_RESPONSE_TYPE) {
-                //todo 使用ExtensionLoader
+                //todo
                 String codecName = SerializerTypeEnum.getName(rpcMessage.getCodec());
-                Serializer serializer = new HessianSerializer();
+                Serializer serializer = ExtensionLoader.getExtensionLoader(Serializer.class).getExtension(codecName);
                 bodyBuf = serializer.serialize(rpcMessage.getData());
-                //todo 使用ExtensionLoader
+                //todo
                 String compressName = CompressTypeEnum.getName(rpcMessage.getCompress());
-                Compress compress = new GzipCompress();
+                Compress compress = ExtensionLoader.getExtensionLoader(Compress.class).getExtension(compressName);
                 bodyBuf = compress.compress(bodyBuf);
                 fullLength += bodyBuf.length;
             }

@@ -1,11 +1,11 @@
 package com.kkzz.remoting.transport.netty.client;
 
 import com.kkzz.ServiceDiscovery;
+import com.kkzz.ServiceRegistry;
 import com.kkzz.enums.CompressTypeEnum;
 import com.kkzz.enums.SerializerTypeEnum;
+import com.kkzz.extension.ExtensionLoader;
 import com.kkzz.factory.SingletonFactory;
-import com.kkzz.loadbalancer.RandomLoadBalance;
-import com.kkzz.nacos.NacosServiceDiscoveryImpl;
 import com.kkzz.remoting.constants.RpcConstants;
 import com.kkzz.remoting.dto.RpcMessage;
 import com.kkzz.remoting.dto.RpcRequest;
@@ -55,8 +55,8 @@ public class NettyRpcClient implements RpcRequestTransport {
                     }
                 });
 
-        //todo 使用ExtensionLoader
-        this.serviceDiscovery = new NacosServiceDiscoveryImpl(new RandomLoadBalance());
+        //todo
+        this.serviceDiscovery = ExtensionLoader.getExtensionLoader(ServiceDiscovery.class).getExtension("nacos");
         this.unprocessedRequests = SingletonFactory.getInstance(UnprocessedRequests.class);
         this.channelProvider = SingletonFactory.getInstance(ChannelProvider.class);
     }
