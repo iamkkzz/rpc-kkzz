@@ -4,6 +4,7 @@ import com.kkzz.config.RpcServiceConfig;
 import com.kkzz.remoting.transport.netty.server.NettyRpcServer;
 import com.kkzz.service.HelloService;
 import com.kkzz.service.impl.HelloServiceImpl;
+import org.springframework.beans.factory.support.AbstractBeanFactory;
 
 import java.net.InetSocketAddress;
 
